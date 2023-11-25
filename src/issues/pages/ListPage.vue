@@ -1,10 +1,16 @@
 <script setup lang="ts">
+import FloatingButtons from 'components/FloatingButtons.vue';
 import LoaderSpinner from 'src/shared/components/LoaderSpinner.vue';
 import FilterSelector from 'src/issues/components/filter-selector/FilterSelector.vue';
 import IssueList from 'src/issues/components/issue-list/IssueList.vue';
 import useIssues from 'src/issues/composables/useIssues.ts';
+import NewIssueDialog from 'src/issues/components/NewIssueDialog.vue';
 
 const { issuesQuery } = useIssues();
+
+const listPageClickTemp1 = () => {
+  console.log('first');
+};
 </script>
 
 <template>
@@ -26,4 +32,12 @@ const { issuesQuery } = useIssues();
       <IssueList v-else :issues="issuesQuery.data?.value || []" />
     </div>
   </div>
+  <!--  Floating buttons-->
+  <FloatingButtons
+    :buttons="[
+      { icon: 'add', color: 'primary', size: 'md', action: listPageClickTemp1 },
+    ]"
+  />
+
+  <NewIssueDialog />
 </template>
