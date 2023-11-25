@@ -21,12 +21,8 @@ const useIssues = () => {
   // const issuesStore = useIssuesStore();
   // const { labels, state } = storeToRefs(issuesStore);
 
-  const issuesQuery = useQuery(
-    ['issues', { labels, state }],
-    () => getIssues(labels.value, state.value),
-    {
-      staleTime: 1000 * 60 * 60,
-    }
+  const issuesQuery = useQuery(['issues', { labels, state }], () =>
+    getIssues(labels.value, state.value)
   );
 
   return {
