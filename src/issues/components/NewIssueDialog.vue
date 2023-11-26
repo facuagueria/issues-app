@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
+import useIssueMutation from 'src/issues/composables/useIssueMutation';
 
 interface Props {
   isOpen: boolean;
@@ -15,6 +16,8 @@ interface Emits {
 const props = defineProps<Props>();
 const emits = defineEmits<Emits>();
 
+const { issueMutation } = useIssueMutation();
+
 const isOpen = ref<boolean>(false);
 const title = ref<string>('');
 const body = ref<string>('');
@@ -23,6 +26,20 @@ const labels = ref<string[]>([]);
 watch(props, () => {
   isOpen.value = props.isOpen;
 });
+
+watch(
+  () => issueMutation.isSuccess.value,
+  (isSuccess) => {
+    if (isSuccess) {
+      title.value = '';
+      body.value = '';
+      labels.value = [];
+
+      issueMutation.reset();
+      emits('onClose');
+    }
+  }
+);
 </script>
 
 <template>
@@ -30,7 +47,7 @@ watch(props, () => {
     <div class="q-pa-md q-gutter-sm">
       <q-dialog v-model="isOpen" position="bottom" persistent>
         <q-card style="width: 500px">
-          <q-form>
+          <q-form @submit="issueMutation.mutate({ title, body, labels })">
             <q-linear-progress :value="1" color="primary" />
 
             <q-card-section class="column no-wrap">
@@ -72,9 +89,16 @@ watch(props, () => {
                 flat
                 color="dark"
                 v-close-popup
+                :disable="issueMutation.isLoading.value"
               />
               <q-space />
-              <q-btn type="submit" label="Add Issue" flat color="dark" />
+              <q-btn
+                type="submit"
+                label="Add Issue"
+                flat
+                color="dark"
+                :disable="issueMutation.isLoading.value"
+              />
             </q-card-actions>
           </q-form>
         </q-card>
