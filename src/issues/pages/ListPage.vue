@@ -1,15 +1,20 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import FloatingButtons from 'components/FloatingButtons.vue';
 import LoaderSpinner from 'src/shared/components/LoaderSpinner.vue';
 import FilterSelector from 'src/issues/components/filter-selector/FilterSelector.vue';
 import IssueList from 'src/issues/components/issue-list/IssueList.vue';
-import useIssues from 'src/issues/composables/useIssues.ts';
 import NewIssueDialog from 'src/issues/components/NewIssueDialog.vue';
+import useIssues from 'src/issues/composables/useIssues.ts';
+import useLabels from 'src/issues/composables/useLabels';
 
 const { issuesQuery } = useIssues();
+const { labelsQuery } = useLabels();
 
-const listPageClickTemp1 = () => {
-  console.log('first');
+const isOpen = ref<boolean>(false);
+
+const openDialog = () => {
+  isOpen.value = true;
 };
 </script>
 
@@ -35,9 +40,14 @@ const listPageClickTemp1 = () => {
   <!--  Floating buttons-->
   <FloatingButtons
     :buttons="[
-      { icon: 'add', color: 'primary', size: 'md', action: listPageClickTemp1 },
+      { icon: 'add', color: 'primary', size: 'md', action: openDialog },
     ]"
   />
 
-  <NewIssueDialog />
+  <NewIssueDialog
+    v-if="labelsQuery.data"
+    :is-open="isOpen"
+    :labels="labelsQuery.data.value?.map((label) => label.name) || []"
+    @on-close="isOpen = false"
+  />
 </template>
