@@ -1,27 +1,14 @@
-import { computed } from 'vue';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { githubApi } from 'src/api/githubApi';
 import { Issue } from 'src/issues/interfaces/issue';
 
-const sleep = () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, 2000);
-  });
-};
-
 const getIssue = async (issueNumber: number): Promise<Issue> => {
-  await sleep();
-
   const { data } = await githubApi.get<Issue>(`/issues/${issueNumber}`);
 
   return data;
 };
 
 const getIssueComments = async (issueNumber: number): Promise<Issue[]> => {
-  await sleep();
-
   const { data } = await githubApi.get<Issue[]>(
     `/issues/${issueNumber}/comments`
   );
